@@ -23,7 +23,7 @@
     </div>
     <div class="flex flex-wrap gap-2 mt-5">
       <button id="tab-p1" onclick="switchTab(1)" class="tab-btn">Phần I: Trắc Nghiệm (50 Câu)</button>
-      <button id="tab-p2" onclick="switchTab(2)" class="tab-btn">Phần II: Đúng / Sai (6 Bài)</button>
+      <button id="tab-p2" onclick="switchTab(2)" class="tab-btn">Phần II: Đúng / Sai (35 Câu)</button>
     </div>
   </div>
 
@@ -59,10 +59,11 @@
   <!-- PHẦN 2 -->
   <div id="p2-screen" class="hidden bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 border border-slate-200/80 dark:border-slate-700">
     <div class="flex items-center justify-between mb-4">
-      <span id="p2-progress" class="text-sm font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/60 px-3 py-1.5 rounded-lg">Bài 1 / 6</span>
+      <span id="p2-progress" class="text-sm font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/60 px-3 py-1.5 rounded-lg">Câu 1 / 35</span>
       <span id="p2-score" class="text-sm font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1.5 rounded-lg">Điểm: 0 ý</span>
     </div>
-    <h3 id="p2-title" class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-3"></h3>
+    <h3 id="p2-title" class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-1"></h3>
+    <p id="p2-intro" class="text-base font-semibold text-slate-800 dark:text-slate-100 mb-4 leading-relaxed"></p>
     <div id="p2-items" class="space-y-4 mb-8"></div>
     <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
       <button id="p2-check-btn" onclick="checkP2Answer()" disabled class="px-6 py-3 bg-cyan-600 text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cyan-700 transition">Kiểm tra kết quả</button>
@@ -72,7 +73,7 @@
 
   <div id="p2-result" class="hidden bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 text-center border border-slate-200/80 dark:border-slate-700">
     <h2 class="text-2xl font-extrabold mb-2">Hoàn Thành Phần Đúng / Sai!</h2>
-    <div id="p2-final-score" class="text-5xl font-black text-cyan-600 dark:text-cyan-400 my-4">0 / 24 ý</div>
+    <div id="p2-final-score" class="text-5xl font-black text-cyan-600 dark:text-cyan-400 my-4">0 / 140 ý</div>
     <p id="p2-result-msg" class="text-slate-600 dark:text-slate-400 mb-6 font-medium"></p>
     <button onclick="startP2Quiz()" class="px-6 py-3 bg-cyan-600 text-white font-bold rounded-xl hover:bg-cyan-700 transition">Làm lại Phần Đúng / Sai</button>
   </div>
@@ -151,36 +152,776 @@ const p1RawData = [
 ];
 
 const p2RawData = [
-  { title: "Bài 1: Làm quen với Trí tuệ nhân tạo", items: [
-    { text: "a) AI là khả năng của máy tính có thể thực hiện những công việc mang tính trí tuệ của con người như đọc chữ, hiểu tiếng nói, học tập và ra quyết định.", answer: true },
-    { text: "b) Mọi hệ thống tự động hóa thông thường (như rơ-le ngắt điện tự động của ấm đun nước) đều được coi là ứng dụng của AI.", answer: false },
-    { text: "c) Phép thử Turing (Turing Test) được Alan Turing đề xuất nhằm đánh giá khả năng của máy tính trong việc thể hiện hành vi thông minh như con người.", answer: true },
-    { text: "d) Hệ chuyên gia MYCIN phát triển từ thập niên 1970 là một trong những ứng dụng AI đầu tiên trong y học dựa trên tri thức và luật suy diễn.", answer: true } ] },
-  { title: "Bài 2: Trí tuệ nhân tạo trong khoa học và đời sống", items: [
-    { text: "a) Trong Y tế, phần mềm IBM Watson for Oncology hỗ trợ bác sĩ chẩn đoán và hướng dẫn điều trị bệnh ung thư dựa trên phân tích dữ liệu y khoa.", answer: true },
-    { text: "b) Trong Giao thông vận tải, AI là nền tảng để phát triển phương tiện tự lái và quản lý giao thông thông minh.", answer: true },
-    { text: "c) AI hẹp (Weak AI / Narrow AI) là các hệ thống AI có năng lực trí tuệ toàn năng vượt trội con người trong mọi lĩnh vực đời sống.", answer: false },
-    { text: "d) Generative AI (AI tạo sinh) như ChatGPT có khả năng tạo ra nội dung mới như văn bản, hình ảnh, âm thanh dựa trên dữ liệu huấn luyện.", answer: true } ] },
-  { title: "Bài 3: Một số thiết bị mạng thông dụng", items: [
-    { text: "a) Hub là thiết bị kết nối trung tâm, khi nhận dữ liệu từ một cổng sẽ phát tán (broadcast) tín hiệu đến tất cả các cổng còn lại.", answer: true },
-    { text: "b) Switch có khả năng xác định cổng kết nối tương ứng với địa chỉ nhận để truyền dữ liệu trực tiếp, giúp tránh xung đột tín hiệu.", answer: true },
-    { text: "c) Router (Bộ định tuyến) là thiết bị dùng để kết nối các máy tính trong cùng một mạng LAN mà không thể kết nối ra ngoài Internet.", answer: false },
-    { text: "d) WAP (Wireless Access Point - Điểm truy cập không dây) giúp kết nối các thiết bị di động vào mạng LAN thông qua sóng vô tuyến.", answer: true } ] },
-  { title: "Bài 4: Giao thức mạng", items: [
-    { text: "a) Giao thức mạng là tập hợp các quy định về cách thức giao tiếp để truyền dữ liệu giữa các đối tượng tham gia mạng.", answer: true },
-    { text: "b) Bộ giao thức TCP/IP là tập hợp các giao thức tiêu chuẩn được sử dụng phổ biến nhất để kết nối các máy tính trên Internet.", answer: true },
-    { text: "c) Giao thức IP chịu trách nhiệm đảm bảo dữ liệu được truyền đi đúng thứ tự và không bị mất mát gói tin.", answer: false },
-    { text: "d) Giao thức Ethernet quy định quy tắc truyền dữ liệu trong mạng cục bộ (LAN).", answer: true } ] },
-  { title: "Bài 5: Thực hành chia sẻ tài nguyên trên mạng", items: [
-    { text: "a) Tài nguyên có thể chia sẻ trong mạng LAN bao gồm tệp tin, thư mục, phần mềm và các thiết bị phần cứng như máy in, ổ đĩa.", answer: true },
-    { text: "b) Việc chia sẻ máy in trong mạng LAN giúp nhiều máy tính trong cùng phòng làm việc có thể in ấn chung trên một máy in.", answer: true },
-    { text: "c) Để chia sẻ thư mục trong mạng LAN trên Windows, bắt buộc hai người dùng phải kết bạn với nhau trên mạng xã hội.", answer: false },
-    { text: "d) Thư mục Public trên hệ điều hành Windows được thiết lập mặc định là thư mục công cộng để chia sẻ tệp.", answer: true } ] },
-  { title: "Bài 6: Giao tiếp và ứng xử trong không gian mạng", items: [
-    { text: "a) Không gian mạng là môi trường được tạo ra nhờ sử dụng các mạng máy tính và Internet.", answer: true },
-    { text: "b) Các hình thức giao tiếp trên không gian mạng bao gồm thư điện tử, mạng xã hội, diễn đàn và tin nhắn tức thời.", answer: true },
-    { text: "c) Quyết định số 874/QĐ-BTTTT ban hành Bộ quy tắc ứng xử trên mạng xã hội áp dụng cho các cơ quan, tổ chức, cá nhân tại Việt Nam.", answer: true },
-    { text: "d) Trên không gian mạng, người dùng được hoàn toàn tự do ngôn luận mà không chịu sự quản lý của bất kỳ quy định pháp luật nào.", answer: false } ] }
+ {
+  "title": "Bài 1 – Câu 1",
+  "intro": "Trí tuệ nhân tạo (AI - Artificial Intelligence) là một lĩnh vực thuộc Khoa học máy tính. Xét các phát biểu sau về khái niệm cơ bản của AI:",
+  "items": [
+   {
+    "text": "a) AI là khả năng của máy tính có thể thực hiện những công việc mang tính trí tuệ của con người như đọc chữ, hiểu tiếng nói, học tập và ra quyết định.",
+    "answer": true
+   },
+   {
+    "text": "b) Mọi hệ thống tự động hóa thông thường (như rơ-le ngắt điện tự động của ấm đun nước) đều được coi là ứng dụng của AI.",
+    "answer": false
+   },
+   {
+    "text": "c) Phép thử Turing (Turing Test) được Alan Turing đề xuất nhằm đánh giá khả năng của máy tính trong việc thể hiện hành vi thông minh như con người.",
+    "answer": true
+   },
+   {
+    "text": "d) Hệ chuyên gia MYCIN phát triển từ thập niên 1970 là một trong những ứng dụng AI đầu tiên trong y học dựa trên tri thức và luật suy diễn.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 1 – Câu 2",
+  "intro": "AI sở hữu các đặc trưng cơ bản phân biệt với các phần mềm truyền thống. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Khả năng học (Machine Learning) cho phép hệ thống AI tự cải thiện hiệu suất hoạt động thông qua việc xử lý dữ liệu mà không cần lập trình lại thủ công.",
+    "answer": true
+   },
+   {
+    "text": "b) Khả năng suy luận của AI cho phép hệ thống rút ra kết luận mới từ các tri thức và dữ liệu đã có.",
+    "answer": true
+   },
+   {
+    "text": "c) Robot thông minh như Asimo chỉ được coi là thiết bị cơ khí đơn thuần chứ không tích hợp các công nghệ AI như thị giác máy tính hay xử lý tiếng nói.",
+    "answer": false
+   },
+   {
+    "text": "d) Mục tiêu chính của việc phát triển ứng dụng AI là thay thế hoàn toàn con người trong mọi hoạt động thể chất mà không cần giải quyết bài toán trí tuệ.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 1 – Câu 3",
+  "intro": "Xét sự khác biệt giữa hệ thống tự động hóa cơ học và các ứng dụng Trí tuệ nhân tạo trong thực tế:",
+  "items": [
+   {
+    "text": "a) Hệ thống cửa ra vào tự động đóng/mở nhờ cảm biến hồng ngoại nhận biết chuyển động là ứng dụng AI có khả năng học tập sâu.",
+    "answer": false
+   },
+   {
+    "text": "b) Phần mềm dịch thuật tự động (như Google Translate) sử dụng các mô hình AI để hiểu ngữ cảnh và dịch văn bản giữa các ngôn ngữ.",
+    "answer": true
+   },
+   {
+    "text": "c) Công cụ tìm kiếm trên Internet sử dụng thuật toán thông minh để phân tích truy vấn và xếp hạng kết quả phù hợp với nhu cầu người dùng.",
+    "answer": true
+   },
+   {
+    "text": "d) Bánh xe nước (guồng nước) tự động dẫn nước vào đồng ruộng được coi là một dạng ứng dụng AI thời cổ đại.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 1 – Câu 4",
+  "intro": "Một nhà trường triển khai hệ thống điểm danh tự động cho học sinh bằng camera thông minh đặt tại cổng trường. Hệ thống ghi nhận học sinh ra vào, phát hiện học sinh không đeo huy hiệu hoặc không mặc đồng phục để gửi thông báo cho giáo viên chủ nhiệm.",
+  "items": [
+   {
+    "text": "a) Hệ thống sử dụng công nghệ Thị giác máy tính (Computer Vision) để nhận dạng khuôn mặt và trang phục của học sinh từ dữ liệu hình ảnh.",
+    "answer": true
+   },
+   {
+    "text": "b) Nếu học sinh đeo khẩu trang kín mặt, hệ thống kiểm tra quy tắc đơn giản vẫn luôn nhận dạng chính xác 100% mà không cần bổ sung dữ liệu huấn luyện.",
+    "answer": false
+   },
+   {
+    "text": "c) Để xây dựng hệ thống này, các kĩ sư cần cung cấp tập dữ liệu mẫu (ảnh học sinh) để huấn luyện mô hình học máy.",
+    "answer": true
+   },
+   {
+    "text": "d) Đây là một ví dụ điển hình về việc ứng dụng AI để giải quyết bài toán thực tế trong quản lý giáo dục.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 1 – Câu 5",
+  "intro": "Một doanh nghiệp thương mại điện tử triển khai Chatbot tư vấn khách hàng tự động 24/7 trên trang web chính thức.",
+  "items": [
+   {
+    "text": "a) Chatbot ứng dụng công nghệ Xử lý ngôn ngữ tự nhiên (NLP) để phân tích câu hỏi của khách hàng và đưa ra câu phản hồi phù hợp.",
+    "answer": true
+   },
+   {
+    "text": "b) Chatbot có khả năng học từ lịch sử trò chuyện để ngày càng nâng cao chất lượng phản hồi khách hàng.",
+    "answer": true
+   },
+   {
+    "text": "c) Khi gặp câu hỏi hoàn toàn mới ngoài tập dữ liệu huấn luyện, Chatbot chắc chắn sẽ lập tức tự sáng tạo ra kiến thức thực tế chính xác 100% mà không bao giờ đưa ra đáp án sai.",
+    "answer": false
+   },
+   {
+    "text": "d) Việc sử dụng Chatbot giúp doanh nghiệp tiết kiệm chi phí nhân sự vận hành và phản hồi khách hàng nhanh chóng.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 2 – Câu 1",
+  "intro": "AI đã và đang thúc đẩy sự phát triển mạnh mẽ của nhiều lĩnh vực khoa học và đời sống. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Trong Y tế, phần mềm IBM Watson for Oncology hỗ trợ bác sĩ chẩn đoán và hướng dẫn điều trị bệnh ung thư dựa trên phân tích dữ liệu y khoa.",
+    "answer": true
+   },
+   {
+    "text": "b) Trong Giao thông vận tải, AI là nền tảng để phát triển phương tiện tự lái (ô tô tự lái, máy bay không người lái) và quản lý giao thông thông minh.",
+    "answer": true
+   },
+   {
+    "text": "c) AI hẹp (Weak AI / Narrow AI) là các hệ thống AI có năng lực trí tuệ toàn năng vượt trội con người trong mọi lĩnh vực đời sống.",
+    "answer": false
+   },
+   {
+    "text": "d) Generative AI (AI tạo sinh) như ChatGPT có khả năng tạo ra nội dung mới như văn bản, hình ảnh, âm thanh dựa trên dữ liệu huấn luyện.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 2 – Câu 2",
+  "intro": "ChatGPT là một ví dụ điển hình về hệ thống AI xử lý ngôn ngữ tự nhiên tiên tiến. Phân tích các đặc điểm của ChatGPT:",
+  "items": [
+   {
+    "text": "a) ChatGPT được huấn luyện trên lượng dữ liệu văn bản khổng lồ từ Internet để nắm bắt ngữ cảnh và sinh văn bản tự nhiên.",
+    "answer": true
+   },
+   {
+    "text": "b) ChatGPT chỉ cung cấp các câu trả lời cố định được lập trình sẵn trong từ điển mà không có khả năng sinh ngôn ngữ linh hoạt.",
+    "answer": false
+   },
+   {
+    "text": "c) ChatGPT có thể tương tác liên tục, hiểu câu hỏi nối tiếp và hỗ trợ người dùng tóm tắt văn bản, viết mã lập trình, tìm sửa lỗi code.",
+    "answer": true
+   },
+   {
+    "text": "d) Mọi câu trả lời do ChatGPT đưa ra luôn đảm bảo chính xác tuyệt đối 100% về mặt sự thật khách quan.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 2 – Câu 3",
+  "intro": "Sự phát triển của AI bên cạnh những lợi ích to lớn cũng kéo theo một số cảnh báo và tác động trái chiều:",
+  "items": [
+   {
+    "text": "a) AI có khả năng tự động hóa nhiều công việc, dẫn đến nguy cơ gia tăng áp lực thất nghiệp trong một số ngành nghề truyền thống.",
+    "answer": true
+   },
+   {
+    "text": "b) Việc thu thập lượng lớn dữ liệu cá nhân để huấn luyện các mô hình AI làm gia tăng lo ngại về xâm phạm quyền riêng tư.",
+    "answer": true
+   },
+   {
+    "text": "c) Hầu hết các hệ thống AI hiện nay đều hoàn toàn minh bạch, cho phép con người dễ dàng giải thích rõ ràng từng bước ra quyết định bên trong mô hình.",
+    "answer": false
+   },
+   {
+    "text": "d) Việc lạm dụng AI tạo sinh có thể dẫn đến lan truyền tin giả (deepfake, tin đồn sai sự thật) trên không gian mạng.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 2 – Câu 4",
+  "intro": "Một bệnh viện triển khai hệ thống AI hỗ trợ chẩn đoán hình ảnh X-quang phổi giúp phát hiện sớm các tổn thương bất thường.",
+  "items": [
+   {
+    "text": "a) Hệ thống AI phân tích các tổn thương trên ảnh X-quang giúp bác sĩ chẩn đoán bệnh nhanh chóng và giảm thiểu sai sót.",
+    "answer": true
+   },
+   {
+    "text": "b) Bác sĩ có thể giao toàn bộ trách nhiệm pháp lý và chuyên môn cho hệ thống AI mà không cần kiểm tra lại kết quả.",
+    "answer": false
+   },
+   {
+    "text": "c) Việc huấn luyện AI chẩn đoán hình ảnh đòi hỏi tập dữ liệu gồm hàng nghìn ảnh X-quang đã được các chuyên gia y tế gán nhãn chính xác.",
+    "answer": true
+   },
+   {
+    "text": "d) Hệ thống AI chẩn đoán X-quang phổi này cũng tự động biết phẫu thuật tim cho bệnh nhân mà không cần chỉnh sửa hay huấn luyện thêm.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 2 – Câu 5",
+  "intro": "Bạn Nam sử dụng ChatGPT để hỗ trợ viết bài luận môn Ngữ văn và giải bài tập lập trình Tin học 12.",
+  "items": [
+   {
+    "text": "a) Nam có thể dùng ChatGPT để gợi ý dàn ý, tìm kiếm ý tưởng và kiểm tra lỗi chính tả cho bài luận.",
+    "answer": true
+   },
+   {
+    "text": "b) Nam nên sao chép nguyên văn 100% câu trả lời của ChatGPT để nộp cho thầy cô mà không cần kiểm tra lại thông tin.",
+    "answer": false
+   },
+   {
+    "text": "c) Khi nhờ ChatGPT sửa lỗi đoạn mã Python, Nam có thể dán đoạn mã bị lỗi vào ô chat và yêu cầu ChatGPT giải thích nguyên nhân gây lỗi.",
+    "answer": true
+   },
+   {
+    "text": "d) Việc phụ thuộc hoàn toàn vào AI trong học tập sẽ làm suy giảm khả năng tư duy phản biện và sáng tạo độc lập của học sinh.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 3 – Câu 1",
+  "intro": "Mạng máy tính sử dụng nhiều loại thiết bị kết nối với các chức năng riêng biệt. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Hub là thiết bị kết nối trung tâm, khi nhận dữ liệu từ một cổng sẽ phát tán (broadcast) tín hiệu đến tất cả các cổng còn lại.",
+    "answer": true
+   },
+   {
+    "text": "b) Switch có khả năng xác định cổng kết nối tương ứng với địa chỉ nhận để truyền dữ liệu trực tiếp, giúp tránh xung đột tín hiệu.",
+    "answer": true
+   },
+   {
+    "text": "c) Router (Bộ định tuyến) là thiết bị dùng để kết nối các máy tính trong cùng một mạng LAN mà không thể kết nối giữa các mạng LAN khác nhau hay ra Internet.",
+    "answer": false
+   },
+   {
+    "text": "d) WAP (Wireless Access Point - Điểm truy cập không dây) giúp kết nối các thiết bị di động vào mạng LAN thông qua sóng vô tuyến.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 3 – Câu 2",
+  "intro": "So sánh đặc điểm kĩ thuật và phạm vi ứng dụng của Hub, Switch và Router:",
+  "items": [
+   {
+    "text": "a) Trong một mạng LAN có hàng trăm máy tính, việc sử dụng Hub thay cho Switch sẽ giúp tăng tốc độ truyền dữ liệu và giảm tối đa va chạm dữ liệu.",
+    "answer": false
+   },
+   {
+    "text": "b) Switch thiết lập kênh truyền tạm thời giữa cổng gửi và cổng nhận nên không gây xung đột tín hiệu với các cổng khác.",
+    "answer": true
+   },
+   {
+    "text": "c) Router có ít nhất một cổng LAN để kết nối với mạng nội bộ và một cổng WAN để kết nối với mạng của nhà cung cấp dịch vụ Internet (ISP).",
+    "answer": true
+   },
+   {
+    "text": "d) Router Wi-Fi gia đình thường là thiết bị tích hợp cả chức năng định tuyến (Router), chuyển mạch (Switch) và điểm truy cập không dây (WAP).",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 3 – Câu 3",
+  "intro": "Xét các phương thức kết nối máy tính và thiết bị thông minh vào mạng cục bộ (LAN):",
+  "items": [
+   {
+    "text": "a) Để kết nối không dây, thiết bị đầu cuối cần có bộ thu phát Wi-Fi (card mạng không dây).",
+    "answer": true
+   },
+   {
+    "text": "b) Trong phòng thực hành máy tính cần độ ổn định cao và tốc độ truyền tải lớn, việc kết nối bằng cáp mạng qua Switch thường được ưu tiên hơn Wi-Fi.",
+    "answer": true
+   },
+   {
+    "text": "c) Khi truy cập vào mạng Wi-Fi có cài mật khẩu, người dùng bắt buộc phải nhập đúng mật khẩu ở lần kết nối đầu tiên.",
+    "answer": true
+   },
+   {
+    "text": "d) Tất cả các thiết bị kết nối vào mạng LAN đều chỉ có thể kết nối bằng dây cáp mạng UTP/STP chứ không thể kết nối qua sóng vô tuyến.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 3 – Câu 4",
+  "intro": "Thầy cô tư vấn giải pháp mạng cho một ngôi nhà 3 tầng có nhu cầu sử dụng Internet cho 5 máy tính để bàn (đặt cố định ở tầng 1) và nhiều điện thoại di động, máy tính bảng ở tất cả các tầng.",
+  "items": [
+   {
+    "text": "a) Lắp đặt Router Wi-Fi của nhà mạng tại tầng 1 và nối dây cáp mạng từ cổng LAN của Router tới 5 máy tính để bàn là giải pháp phù hợp.",
+    "answer": true
+   },
+   {
+    "text": "b) Nếu sóng Wi-Fi ở tầng 3 bị yếu, ta có thể lắp thêm một WAP (hoặc bộ kích sóng Wi-Fi) ở tầng 3 và nối dây LAN từ Router lên WAP này.",
+    "answer": true
+   },
+   {
+    "text": "c) Thay vì dùng Router Wi-Fi, chỉ cần mua một thiết bị Hub 8 cổng đặt ở tầng 1 là tất cả điện thoại di động ở tầng 3 sẽ tự bắt được Wi-Fi tốt.",
+    "answer": false
+   },
+   {
+    "text": "d) Việc kết nối 5 máy tính để bàn bằng dây cáp giúp đảm bảo đường truyền ổn định khi chơi game hoặc truyền tệp dung lượng lớn.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 3 – Câu 5",
+  "intro": "Một phòng máy tính trường học gồm 40 máy tính cố định. Kĩ thuật viên cân nhắc lựa chọn thiết bị kết nối trung tâm giữa 2 phương án: Phương án A (dùng 1 Switch 48 cổng) và Phương án B (dùng 5 Hub 8 cổng nối tầng với nhau).",
+  "items": [
+   {
+    "text": "a) Phương án A (dùng Switch) cho hiệu suất mạng cao hơn hẳn Phương án B do hạn chế được xung đột tín hiệu trên toàn mạng.",
+    "answer": true
+   },
+   {
+    "text": "b) Trong Phương án B, khi nhiều máy tính đồng thời gửi dữ liệu, hiện tượng xung đột (collision) sẽ xảy ra thường xuyên làm giảm nghiêm trọng tốc độ mạng.",
+    "answer": true
+   },
+   {
+    "text": "c) Chi phí đầu tư cho 1 Switch 48 cổng luôn rẻ hơn gấp 10 lần so với Hub 8 cổng nhưng hiệu năng lại thấp hơn.",
+    "answer": false
+   },
+   {
+    "text": "d) Lựa chọn Phương án A là giải pháp tối ưu về mặt kĩ thuật và độ tin cậy cho phòng thực hành tin học.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 4 – Câu 1",
+  "intro": "Giao thức mạng (Network Protocol) đóng vai trò cốt lõi trong truyền thông dữ liệu. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Giao thức mạng là tập hợp các quy định về cách thức giao tiếp để truyền dữ liệu giữa các đối tượng tham gia mạng.",
+    "answer": true
+   },
+   {
+    "text": "b) Bộ giao thức TCP/IP là tập hợp các giao thức tiêu chuẩn được sử dụng phổ biến nhất để kết nối các máy tính trên Internet.",
+    "answer": true
+   },
+   {
+    "text": "c) Giao thức IP (Internet Protocol) chịu trách nhiệm đảm bảo dữ liệu được truyền đi đúng thứ tự và không bị mất mát gói tin.",
+    "answer": false
+   },
+   {
+    "text": "d) Giao thức Ethernet quy định quy tắc truyền dữ liệu trong mạng cục bộ (LAN).",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 4 – Câu 2",
+  "intro": "Vai trò của địa chỉ IP và các giao thức ứng dụng phổ biến trên Internet:",
+  "items": [
+   {
+    "text": "a) Mỗi thiết bị khi tham gia vào mạng Internet đều cần có một địa chỉ IP duy nhất để định danh và định tuyến dữ liệu.",
+    "answer": true
+   },
+   {
+    "text": "b) Giao thức HTTP/HTTPS quy định cách thức truyền nhận dữ liệu giữa trình duyệt web và máy chủ web.",
+    "answer": true
+   },
+   {
+    "text": "c) Dịch vụ tên miền DNS (Domain Name System) giúp chuyển đổi tên miền dễ nhớ (như moet.gov.vn) sang địa chỉ IP tương ứng.",
+    "answer": true
+   },
+   {
+    "text": "d) Giao thức SMTP được dùng để lấy thư điện tử từ máy chủ về máy tính cá nhân, còn POP3 được dùng để gửi thư đi.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 4 – Câu 3",
+  "intro": "Phân tích cơ chế đóng gói và truyền dữ liệu của bộ giao thức TCP/IP:",
+  "items": [
+   {
+    "text": "a) Giao thức TCP chia dữ liệu cần gửi thành các gói tin nhỏ (packet) và đánh số thứ tự trước khi truyền qua mạng.",
+    "answer": true
+   },
+   {
+    "text": "b) Tại nơi nhận, giao thức TCP kiểm tra các gói tin, nếu phát hiện gói tin bị lỗi hoặc mất sẽ yêu cầu phía gửi truyền lại.",
+    "answer": true
+   },
+   {
+    "text": "c) Giao thức IP xác định đường đi tối ưu cho từng gói tin từ máy gửi đến máy nhận dựa trên địa chỉ IP đích.",
+    "answer": true
+   },
+   {
+    "text": "d) Việc chia nhỏ dữ liệu thành gói tin khiến đường truyền mạng luôn bị tắc nghẽn hoàn toàn và không thể truyền xen kẽ nhiều cuộc gọi/dữ liệu.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 4 – Câu 4",
+  "intro": "Kiểm tra thông số mạng của một máy tính trong phòng thực hành bằng lệnh ipconfig thu được các thông tin: IPv4 Address: 192.168.1.25 | Subnet Mask: 255.255.255.0 | Default Gateway: 192.168.1.1.",
+  "items": [
+   {
+    "text": "a) Địa chỉ IP định danh của máy tính này trong mạng nội bộ là 192.168.1.25.",
+    "answer": true
+   },
+   {
+    "text": "b) Địa chỉ 192.168.1.1 (Default Gateway) là địa chỉ IP cổng LAN trên Router giúp máy tính kết nối ra ngoài mạng LAN.",
+    "answer": true
+   },
+   {
+    "text": "c) Nếu đặt địa chỉ IP của một máy tính khác trong cùng mạng LAN trùng hoàn toàn là 192.168.1.25, cả hai máy tính sẽ hoạt động bình thường mà không báo lỗi.",
+    "answer": false
+   },
+   {
+    "text": "d) Số 192 trong địa chỉ IP khi chuyển đổi sang hệ nhị phân 8-bit có dạng 11000000.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 4 – Câu 5",
+  "intro": "Học sinh gõ địa chỉ trang web dantri.com.vn vào thanh địa chỉ của trình duyệt web Chrome để đọc tin tức hàng ngày.",
+  "items": [
+   {
+    "text": "a) Trình duyệt web sẽ gửi truy vấn tới máy chủ DNS để tra cứu địa chỉ IP tương ứng với tên miền dantri.com.vn.",
+    "answer": true
+   },
+   {
+    "text": "b) Sau khi nhận được địa chỉ IP từ máy chủ DNS, trình duyệt gửi yêu cầu kết nối HTTPS tới máy chủ web chứa trang báo Dân trí.",
+    "answer": true
+   },
+   {
+    "text": "c) Tiền tố giao thức HTTPS cho biết giao thức truyền tải siêu văn bản có mã hóa an toàn (SSL/TLS) được sử dụng để bảo mật dữ liệu.",
+    "answer": true
+   },
+   {
+    "text": "d) Nếu máy chủ DNS của nhà mạng bị sự cố, gõ tên miền dantri.com.vn hay gõ trực tiếp địa chỉ IP chính xác của máy chủ Dân trí thì trình duyệt đều tuyệt đối không thể mở được trang web.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 5 – Câu 1",
+  "intro": "Chia sẻ tài nguyên trong mạng cục bộ (LAN) mang lại nhiều tiện ích vận hành. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Tài nguyên có thể chia sẻ trong mạng LAN bao gồm tệp tin, thư mục, phần mềm và các thiết bị phần cứng như máy in, ổ đĩa.",
+    "answer": true
+   },
+   {
+    "text": "b) Việc chia sẻ máy in trong mạng LAN giúp nhiều máy tính trong cùng phòng làm việc có thể in ấn chung trên một máy in.",
+    "answer": true
+   },
+   {
+    "text": "c) Để chia sẻ thư mục trong mạng LAN trên Windows, bắt buộc hai người dùng phải kết bạn với nhau trên mạng xã hội.",
+    "answer": false
+   },
+   {
+    "text": "d) Thư mục Public trên hệ điều hành Windows được thiết lập mặc định là thư mục công cộng để chia sẻ tệp.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 5 – Câu 2",
+  "intro": "Quy trình phân quyền khi chia sẻ thư mục trên hệ điều hành Windows:",
+  "items": [
+   {
+    "text": "a) Quyền Read (Chỉ đọc) cho phép người dùng trong mạng xem và mở tệp nhưng không thể sửa đổi hay xóa tệp trong thư mục chia sẻ.",
+    "answer": true
+   },
+   {
+    "text": "b) Quyền Read/Write (Đọc/Ghi) cho phép người dùng trong mạng xem, chỉnh sửa, tạo mới và xóa tệp trong thư mục chia sẻ.",
+    "answer": true
+   },
+   {
+    "text": "c) Để hủy bỏ việc chia sẻ thư mục, ta vào Advanced Sharing và tích chọn ô Share this folder.",
+    "answer": false
+   },
+   {
+    "text": "d) Khi chia sẻ tài nguyên trên mạng LAN, việc đặt mật khẩu bảo vệ (Password protected sharing) giúp nâng cao tính an toàn dữ liệu.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 5 – Câu 3",
+  "intro": "Cấu hình và nguyên lý chia sẻ máy in trong mạng cục bộ:",
+  "items": [
+   {
+    "text": "a) Máy in phải được kết nối trực tiếp với một máy tính trong mạng LAN (máy chủ in) và máy tính này được bật chế độ chia sẻ máy in.",
+    "answer": true
+   },
+   {
+    "text": "b) Các máy tính khác trong mạng LAN muốn in được phải thực hiện kết nối (Add printer) tới máy in đã chia sẻ trên máy chủ in.",
+    "answer": true
+   },
+   {
+    "text": "c) Khi máy chủ in (máy tính nối trực tiếp với máy in) bị tắt nguồn, các máy tính khác trong mạng LAN vẫn có thể ra lệnh in bình thường.",
+    "answer": false
+   },
+   {
+    "text": "d) Tên máy in chia sẻ trên mạng có dạng \\\\Tên_Máy_Chủ\\Tên_Máy_In.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 5 – Câu 4",
+  "intro": "Trong một văn phòng nhỏ, máy tính MAY_01 chứa thư mục BAOCAO cần chia sẻ cho đồng nghiệp sử dụng máy tính MAY_02 chỉnh sửa bài viết.",
+  "items": [
+   {
+    "text": "a) Trên MAY_01, người quản trị chọn thư mục BAOCAO -> Properties -> thẻ Sharing -> chọn Share... và cấp quyền Read/Write cho nhóm Everyone.",
+    "answer": true
+   },
+   {
+    "text": "b) Từ máy MAY_02, người dùng mở File Explorer, gõ vào thanh địa chỉ \\\\MAY_01 để truy cập vào danh sách các tài nguyên được chia sẻ từ MAY_01.",
+    "answer": true
+   },
+   {
+    "text": "c) Người dùng ở máy MAY_02 chỉ có thể xem nội dung tệp báo cáo chứ không thể lưu thay đổi vào tệp đó vì hệ thống luôn chặn quyền ghi từ xa.",
+    "answer": false
+   },
+   {
+    "text": "d) Để đảm bảo an toàn, thư mục BAOCAO chỉ nên cấp quyền cho những tài khoản được phép và bật tính năng yêu cầu mật khẩu khi truy cập mạng.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 5 – Câu 5",
+  "intro": "Giáo viên muốn kết nối máy tính cá nhân tới máy in Canon đã được chia sẻ từ máy tính bàn P.HIEUTRUONG trong mạng LAN nhà trường.",
+  "items": [
+   {
+    "text": "a) Máy tính của giáo viên và máy P.HIEUTRUONG bắt buộc phải đang cùng kết nối vào mạng LAN của nhà trường.",
+    "answer": true
+   },
+   {
+    "text": "b) Trên máy tính giáo viên, vào Settings -> Devices -> Printers & scanners -> Add a printer, chọn máy in Canon hiển thị dưới dạng Canon trên P.HIEUTRUONG.",
+    "answer": true
+   },
+   {
+    "text": "c) Nếu máy P.HIEUTRUONG bị bật Tường lửa (Firewall) chặn toàn bộ các kết nối chia sẻ tệp và máy in, máy tính giáo viên vẫn tự động tìm thấy máy in mà không gặp trở ngại.",
+    "answer": false
+   },
+   {
+    "text": "d) Sau khi kết nối thành công, giáo viên có thể mở tệp Word và chọn tên máy in Canon trên P.HIEUTRUONG trong danh sách máy in để thực hiện in tài liệu.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 6 – Câu 1",
+  "intro": "Không gian mạng (Cyberspace) là môi trường giao tiếp phổ biến trong kỷ nguyên số. Cho các phát biểu sau:",
+  "items": [
+   {
+    "text": "a) Không gian mạng là môi trường được tạo ra nhờ sử dụng các mạng máy tính và Internet.",
+    "answer": true
+   },
+   {
+    "text": "b) Các hình thức giao tiếp trên không gian mạng bao gồm thư điện tử (email), mạng xã hội, diễn đàn, cuộc gọi video trực tuyến và tin nhắn tức thời.",
+    "answer": true
+   },
+   {
+    "text": "c) Quyết định số 874/QĐ-BTTTT ban hành Bộ quy tắc ứng xử trên mạng xã hội áp dụng cho các cơ quan, tổ chức, cá nhân sử dụng mạng xã hội tại Việt Nam.",
+    "answer": true
+   },
+   {
+    "text": "d) Trên không gian mạng, người dùng được hoàn toàn tự do ngôn luận mà không chịu sự quản lý của bất kỳ quy định pháp luật nào.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 6 – Câu 2",
+  "intro": "Phân tích ưu điểm và nhược điểm của giao tiếp trong không gian mạng:",
+  "items": [
+   {
+    "text": "a) Giao tiếp trên không gian mạng giúp tiết kiệm thời gian, chi phí di chuyển và mở rộng khả năng kết nối xã hội.",
+    "answer": true
+   },
+   {
+    "text": "b) Việc thiếu các tín hiệu phi ngôn ngữ (như ánh mắt, nét mặt, ngữ điệu giọng nói) trong tin nhắn văn bản có thể dẫn đến hiểu nhầm cảm xúc của người gửi.",
+    "answer": true
+   },
+   {
+    "text": "c) Giao tiếp mạng giúp con người hoàn toàn tránh khỏi mọi rủi ro về lừa đảo, mất an toàn thông tin hay lộ bí mật riêng tư.",
+    "answer": false
+   },
+   {
+    "text": "d) Việc nghiện mạng xã hội có thể làm giảm tương tác trực tiếp ngoài đời thực và ảnh hưởng tiêu cực đến sức khỏe tâm lý.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 6 – Câu 3",
+  "intro": "Thể hiện tính nhân văn, lịch sự và văn hóa khi tham gia không gian mạng:",
+  "items": [
+   {
+    "text": "a) Sử dụng ngôn từ đúng mực, lịch sự, không chửi thề, châm chọc hay xúc phạm người khác khi bình luận trên mạng xã hội.",
+    "answer": true
+   },
+   {
+    "text": "b) Tôn trọng quyền riêng tư của người khác bằng cách không tự ý đăng tải thông tin cá nhân, ảnh riêng tư khi chưa được phép.",
+    "answer": true
+   },
+   {
+    "text": "c) Thấy một bài viết nói xấu hoặc miệt thị bạn học trên mạng xã hội, ta nên chia sẻ (share) rộng rãi để mọi người cùng vào công kích.",
+    "answer": false
+   },
+   {
+    "text": "d) Kiểm chứng độ tin cậy của thông tin trước khi chia sẻ nhằm tránh lan truyền tin đồn thất thiệt, tin giả gây hoang mang dư luận.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 6 – Câu 4",
+  "intro": "Bạn Bình nhận được một tin nhắn từ tài khoản mạng xã hội của một người bạn thân trong lớp với nội dung: 'Tớ đang gặp chuyện gấp, chuyển cho tớ vay 2 triệu đồng vào số tài khoản này nhé!'.",
+  "items": [
+   {
+    "text": "a) Bình nên lập tức chuyển tiền ngay mà không cần xác minh vì đó là tài khoản của bạn thân.",
+    "answer": false
+   },
+   {
+    "text": "b) Bình nên gọi điện thoại trực tiếp hoặc gặp mặt trực tiếp người bạn đó để xác nhận xem có đúng bạn đang nhắn tin vay tiền hay không.",
+    "answer": true
+   },
+   {
+    "text": "c) Nếu phát hiện tài khoản của bạn bị kẻ xấu chiếm đoạt (hack), Bình nên thông báo cho bạn mình và cảnh báo cho các bạn khác trong lớp.",
+    "answer": true
+   },
+   {
+    "text": "d) Đây là bài học thực tế về việc nâng cao cảnh giác trước các nguy cơ lừa đảo tài chính trên không gian mạng.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 6 – Câu 5",
+  "intro": "Trong một nhóm học tập trên Zalo của lớp 12A, hai bạn học sinh xảy ra bất đồng quan điểm về việc phân công bài tập nhóm và bắt đầu sử dụng những lời lẽ gay gắt, xúc phạm nhau.",
+  "items": [
+   {
+    "text": "a) Trưởng nhóm hoặc các thành viên khác nên giữ bình tĩnh, nhắc nhở hai bạn dừng việc tranh cãi gay gắt và quay lại thảo luận trên tinh thần tôn trọng.",
+    "answer": true
+   },
+   {
+    "text": "b) Các thành viên khác nên hùa theo một bên, sử dụng ngôn từ tục tĩu để kích động cuộc tranh cãi bùng nổ hơn.",
+    "answer": false
+   },
+   {
+    "text": "c) Nếu bất đồng không thể tự giải quyết hòa nhã, trưởng nhóm có thể đề nghị trao đổi trực tiếp với giáo viên chủ nhiệm để nhờ tư vấn.",
+    "answer": true
+   },
+   {
+    "text": "d) Môi trường nhóm học tập trực tuyến cần được duy trì sự tôn trọng, văn minh và tinh thần hỗ trợ lẫn nhau.",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 7 – Câu 1",
+  "intro": "Khái niệm và đặc điểm của ngôn ngữ HTML và cấu trúc trang web:",
+  "items": [
+   {
+    "text": "a) HTML (HyperText Markup Language) là ngôn ngữ đánh dấu siêu văn bản được sử dụng để thiết lập cấu trúc và hiển thị nội dung trang web.",
+    "answer": true
+   },
+   {
+    "text": "b) Tệp văn bản nguồn HTML thường có phần mở rộng là .html hoặc .htm.",
+    "answer": true
+   },
+   {
+    "text": "c) Các thẻ HTML không phân biệt chữ hoa và chữ thường (ví dụ <P> và <p> có tác dụng như nhau).",
+    "answer": true
+   },
+   {
+    "text": "d) HTML là một ngôn ngữ lập trình bậc cao có khả năng tính toán đại số phức tạp và quản trị cơ sở dữ liệu như Python hay C++.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 7 – Câu 2",
+  "intro": "Phân biệt thẻ HTML, phần tử HTML và các thuộc tính:",
+  "items": [
+   {
+    "text": "a) Phần tử HTML bao gồm thẻ bắt đầu (opening tag), phần nội dung và thẻ kết thúc (closing tag).",
+    "answer": true
+   },
+   {
+    "text": "b) Thẻ đơn (như <br>, <hr>, <img>) là thẻ không có thẻ kết thúc và không chứa nội dung bên trong.",
+    "answer": true
+   },
+   {
+    "text": "c) Thuộc tính (attribute) của thẻ cung cấp thêm thông tin điều khiển, được đặt bên trong thẻ bắt đầu (ví dụ <p style=\"color: red\">).",
+    "answer": true
+   },
+   {
+    "text": "d) Trình duyệt web sẽ hiển thị chính xác số lượng khoảng trắng và dấu xuống dòng (phím Enter) mà người dùng gõ trong mã nguồn HTML.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 7 – Câu 3",
+  "intro": "Cấu trúc cơ bản của một tệp HTML tiêu chuẩn:",
+  "items": [
+   {
+    "text": "a) Dòng đầu tiên <!DOCTYPE html> dùng để khai báo cho trình duyệt biết tệp văn bản này theo chuẩn HTML5.",
+    "answer": true
+   },
+   {
+    "text": "b) Thẻ <html> là phần tử gốc (root) chứa toàn bộ nội dung của trang web.",
+    "answer": true
+   },
+   {
+    "text": "c) Phần tử <head> chứa các thông tin mô tả trang web như tiêu đề trang (<title>), bảng mã ký tự (<meta charset=\"utf-8\">), liên kết tệp CSS.",
+    "answer": true
+   },
+   {
+    "text": "d) Phần tử <body> chứa toàn bộ nội dung hiển thị trực tiếp cho người xem trên trình duyệt (văn bản, hình ảnh, bảng, liên kết).",
+    "answer": true
+   }
+  ]
+ },
+ {
+  "title": "Bài 7 – Câu 4",
+  "intro": "Quan sát đoạn mã HTML sau: <!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Trang web lớp 12A</title></head><body><h1>Chào mừng đến với Lớp 12A</h1><p>Đây là trang web chính thức của lớp.</p></body></html>.",
+  "items": [
+   {
+    "text": "a) Thẻ <title> nằm trong phần tử <head> định nghĩa tên trang web sẽ xuất hiện trên thẻ (tab) của trình duyệt.",
+    "answer": true
+   },
+   {
+    "text": "b) Dòng chữ 'Chào mừng đến với Lớp 12A' nằm trong thẻ <h1> sẽ được trình duyệt hiển thị dưới dạng tiêu đề cỡ chữ lớn và in đậm.",
+    "answer": true
+   },
+   {
+    "text": "c) Thẻ <meta charset=\"utf-8\"> giúp trang web hiển thị đúng tiếng Việt có dấu mà không bị lỗi font ký tự.",
+    "answer": true
+   },
+   {
+    "text": "d) Nếu xóa bỏ hoàn toàn cặp thẻ <body> và </body>, phần nội dung tiêu đề <h1> vẫn tuân thủ chuẩn cấu trúc cây HTML.",
+    "answer": false
+   }
+  ]
+ },
+ {
+  "title": "Bài 7 – Câu 5",
+  "intro": "Bạn Mai soạn thảo tệp HTML bằng phần mềm Notepad trên Windows. Khi mở tệp bằng trình duyệt Google Chrome, trang web bị lỗi hiển thị các ký tự tiếng Việt dạng 'Chào m?ng b?n'.",
+  "items": [
+   {
+    "text": "a) Nguyên nhân là do trình duyệt Chrome không hỗ trợ hiển thị ngôn ngữ tiếng Việt.",
+    "answer": false
+   },
+   {
+    "text": "b) Lỗi xuất hiện do tệp HTML thiếu thẻ khai báo bảng mã ký tự <meta charset=\"utf-8\"> trong phần <head> hoặc khi lưu tệp trong Notepad chưa chọn Encoding là UTF-8.",
+    "answer": true
+   },
+   {
+    "text": "c) Để khắc phục, Mai bổ sung thẻ <meta charset=\"utf-8\"> vào trong phần <head> và thực hiện Save As tệp trong Notepad với Encoding chọn UTF-8.",
+    "answer": true
+   },
+   {
+    "text": "d) Sử dụng các phần mềm soạn thảo chuyên nghiệp như Notepad++ hay Sublime Text sẽ hỗ trợ Mai dễ dàng quản lý bảng mã UTF-8 và làm nổi bật cú pháp HTML.",
+    "answer": true
+   }
+  ]
+ }
 ];
 
 const TAB_ON  = "tab-btn flex-1 py-3 px-4 rounded-xl font-bold text-sm transition text-center shadow-sm bg-cyan-600 text-white min-w-[130px]";
@@ -336,8 +1077,9 @@ const CHOICE_OFF = "px-4 py-2 rounded-lg border border-slate-200 dark:border-sla
 function showP2Question() {
   p2Answers = {};
   const q = p2Questions[p2Index];
-  document.getElementById('p2-progress').textContent = `Bài ${p2Index + 1} / ${p2Questions.length}`;
+  document.getElementById('p2-progress').textContent = `Câu ${p2Index + 1} / ${p2Questions.length}`;
   document.getElementById('p2-title').textContent = q.title;
+  document.getElementById('p2-intro').textContent = q.intro;
 
   const container = document.getElementById('p2-items');
   container.innerHTML = '';
@@ -396,7 +1138,7 @@ function nextP2Question() {
   } else {
     document.getElementById('p2-final-score').textContent = `${p2Score} / ${p2Total()} ý`;
     document.getElementById('p2-result-msg').textContent =
-      p2Score >= 20 ? "Rất tốt! Bạn nắm chắc phần Đúng / Sai." : "Hãy xem lại các ý còn sai và thử lại nhé!";
+      p2Score >= p2Total() * 0.7 ? "Rất tốt! Bạn nắm chắc phần Đúng / Sai." : "Hãy xem lại các ý còn sai và thử lại nhé!";
     switchTab(2);
   }
 }
